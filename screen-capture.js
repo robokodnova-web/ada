@@ -77,12 +77,20 @@ async function captureStoryScreen() {
     const width = ratio === null ? frame.width : video.videoWidth * ratio;
     const height = ratio === null ? frame.height : video.videoHeight * ratio;
     context.drawImage(video, (frame.width - width) / 2, (frame.height - height) / 2, width, height);
+    let src;
     try {
-      frames.set(video.id, frame.toDataURL('image/png'));
+      src = frame.toDataURL('image/png');
     } catch (error) {
       if (error.name !== 'SecurityError') throw error;
-      frames.set(video.id, await exportVideoFrame(video, frame.width, frame.height, style.backgroundColor, style.objectFit));
+      src = await exportVideoFrame(video, frame.width, frame.height, style.backgroundColor, style.objectFit);
     }
+    frames.set(video.id, {
+      src,
+      className: video.className,
+      cssText: video.style.cssText,
+      parentId: video.parentElement.id,
+      childIndex: Array.from(video.parentElement.children).indexOf(video),
+    });
   }
   const screenshot = await html2canvas(stage, {
     backgroundColor: '#000000',
@@ -91,13 +99,18 @@ async function captureStoryScreen() {
     scale: 1920 / bounds.width,
     logging: false,
     onclone: (copy) => {
-      frames.forEach((src, id) => {
-        const video = copy.getElementById(id);
+      frames.forEach((frame, id) => {
+        // html2canvas videoyu kimliği olmayan bir canvas öğesine dönüştürür.
+        const parent = copy.getElementById(frame.parentId);
+        const video = copy.getElementById(id) || parent?.children[frame.childIndex];
+        if (!video || !['VIDEO', 'CANVAS'].includes(video.tagName)) {
+          throw new Error('Video karesi ekran görüntüsüne yerleştirilemedi. Sayfayı yenileyip tekrar deneyin.');
+        }
         const image = copy.createElement('img');
         image.id = id;
-        image.className = video.className;
-        image.style.cssText = video.style.cssText;
-        image.src = src;
+        image.className = frame.className;
+        image.style.cssText = frame.cssText;
+        image.src = frame.src;
         image.alt = '';
         video.replaceWith(image);
       });
