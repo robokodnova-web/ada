@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <title>Oyun Adası</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer crossorigin="anonymous"></script>
+  <script src="screen-capture.js" defer></script>
+</head>
+<body>
+  <main class="stage" aria-label="Oyun Adası">
+    <section id="welcome-screen" class="screen" aria-label="Ada seçimi">
+      <img class="scene-image" src="images/giris.png" alt="Kelebekler Adası ve Çiçek Vadisi tabelalarının önündeki maceracı çocuk.">
+      <video id="intro-video" class="scene-video" playsinline preload="auto" hidden></video>
+      <button class="island-hotspot butterfly-hotspot" data-island="butterfly" type="button" aria-label="Kelebekler Adası'nı seç" disabled></button>
+      <button class="island-hotspot flower-hotspot" data-island="flower" type="button" aria-label="Çiçek Adası'nı seç" disabled></button>
+      <p id="selection-hint" class="selection-hint" role="status" hidden>Seçimini şimdi yapabilirsin.</p>
+      <div id="start-overlay" class="start-overlay">
+        <button id="start-button" class="start-button" type="button" aria-label="Başla"><img src="images/baslabuton.png" alt="Başla"></button>
+      </div>
+    </section>
+    <section id="watch-screen" class="screen" aria-label="Adayı keşfet" hidden>
+      <img id="island-preview" class="scene-image" src="images/kelebekler.png" alt="Kelebekler Adası">
+      <video id="island-video" class="scene-video" playsinline preload="metadata" hidden></video>
+      <button id="change-island" class="scene-control back-control" type="button" aria-label="Ada seçimine dön" title="Ada seçimine dön">←</button>
+      <button id="write-button" class="scene-control next-control" type="button" aria-label="Hikâyeni yaz" title="Hikâyeni yaz">→</button>
+    </section>
+    <section id="write-screen" class="screen paper-screen" aria-label="Hikâyeni yaz" hidden>
+      <img id="writing-background" class="writing-background" src="images/yazi-sahnesi.png" alt="">
+      <div id="writing-preview" class="writing-preview" aria-label="Seçtiğin adanın sürekli oynayan videosu">
+        <img id="writing-preview-image" class="scene-image" src="images/kelebekler.png" alt="Seçtiğin ada" hidden>
+        <video id="writing-video" class="scene-video" controls playsinline muted loop preload="none" hidden></video>
+      </div>
+      <div id="writing-paper" class="writing-paper">
+        <img class="scene-image export-parchment" src="images/bosyazialani.png" alt="Boş parşömen">
+        <div class="paper-heading"><h1>Hikâyeni yaz</h1><p>İzlediğiniz videoya göre hikâyenin devamını aşağıdaki alana yazabilirsiniz.</p></div>
+        <div class="paper-content">
+          <input id="story-title" type="text" maxlength="120" value="Adanın Sırrı" placeholder="Adanın Sırrı" aria-label="Hikâyenin başlığı" autocomplete="off">
+          <textarea id="story-text" placeholder="Hikâyen…" aria-label="Hikâyen" spellcheck="true"></textarea>
+        </div>
+      </div>
+      <button id="back-to-video" class="scene-control back-control" type="button" aria-label="Adaya tekrar bak" title="Adaya tekrar bak">←</button>
+      <div class="story-actions">
+        <button id="download-story" class="wood-button" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h13l4 4v14H3V3zm3 0v7h10V3M7 21v-8h10v8M14 4v4"/></svg>Kaydet</button>
+        <button id="print-story-button" class="wood-button" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8V3h12v5M6 17H3V8h18v9h-3M6 13h12v8H6zM17 10h1"/></svg>Yazdır</button>
+        <span id="action-status" role="status"></span>
+      </div>
+    </section>
+    <div id="mini-transition" class="mini-transition" aria-hidden="true" hidden></div>
+    <span id="save-status" class="sr-only" role="status"></span>
+  </main>
+  <article id="print-story" aria-label="Yazdırılacak hikâye"><h1 id="print-title"></h1><p id="print-island"></p><div id="print-text"></div></article>
+</body>
+</html>
